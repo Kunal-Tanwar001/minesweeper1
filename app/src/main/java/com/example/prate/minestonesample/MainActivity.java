@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     LinearLayout rootLayout;
 
     public final static int mine=-1;
-    int num_of_mines=15;
+    int num_of_mines=18;
     int x[]={-1,-1,-1,0,1,1,1,0};
     int y[]={-1,0,1,1,1,0,-1,-1};
 
@@ -180,8 +180,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(!board[i][j].revealed){
                     if(board[i][j].getValue()==mine)
                         board[i][j].setText("*");
-                    else
-                        board[i][j].setText(board[i][j].getValue()+"");
+                    else {
+                        if(board[i][j].getValue()==0){
+                            board[i][j].setText( " ");
+                    }
+                           else
+                        board[i][j].setText(board[i][j].getValue() + "");
+                    }
                 }
             }
         }

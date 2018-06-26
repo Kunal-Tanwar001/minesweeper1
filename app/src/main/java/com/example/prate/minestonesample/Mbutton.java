@@ -27,8 +27,12 @@ public class Mbutton extends AppCompatButton {
 
     public void revealstatus(){
         if(value!=MainActivity.mine){
-
+             if(value==0){
+                 setText("");
+             }
+             else
             setText(""+value);
+
             revealed=true;
             setEnabled(false);
 
