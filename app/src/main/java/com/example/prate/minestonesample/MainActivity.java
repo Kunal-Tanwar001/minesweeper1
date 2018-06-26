@@ -1,6 +1,7 @@
 package com.example.prate.minestonesample;
 
 
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,11 +27,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     LinearLayout rootLayout;
 
     public final static int mine=-1;
-    int num_of_mines=5;
+    int num_of_mines=15;
     int x[]={-1,-1,-1,0,1,1,1,0};
     int y[]={-1,0,1,1,1,0,-1,-1};
-    int t[]=new int[num_of_mines];
-    int u[]=new int[num_of_mines];
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +39,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rootLayout=findViewById(R.id.root);
         setup();
         setmines();
-        setBoard();
+      // show();
 
 
 
     }
-
+//    private void show() {
+//        for(int i=0;i<row;i++){
+//            for(int j = 0; j<col; j++){
+//                board[i][j].setText(board[i][j].value+"");
+//            }
+//        }
+//    }
 
     public void setup(){
         currentstatus=true;
@@ -79,40 +85,57 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
-    public void setBoard() {
-        for (int i = 0; i < row; i++) {
-            for(int j=0;j<col;j++){
 
-                int count=0;
-                if (board[i][j].getValue() != mine) {
+//    public void setBoard() {
+//        for (int i = 0; i < row; i++) {
+//            for(int j=0;j<col;j++){
+//
+//                int count=0;
+//                if (board[i][j].getValue() != mine) {
+//
+//                    for(int k=0;k<8;k++){
+//                        int v=i+x[k];
+//                        int z=i+y[k];
+//                        if(v>=0 && v<row && z>=0 && z<col){
+//                            if(board[v][z].getValue()==mine)
+//                                count++;
+//                        }
+//                    }
+//                }
+//
+//                board[i][j].setValue(count);
+//            }
+//        }
+  public void setmines(){
+        Random rand=new Random();
+        int count = 0;
+        while(count <= num_of_mines){
+            int x,y;
+            x = rand.nextInt(row);
+            y = rand.nextInt(col);
+            if(board[x][y].value != mine){
+                board[x][y].value = mine;
+                count++;
+                setupNeighbour(board[x][y]);
+            }
+        }
 
-                    for(int k=0;k<8;k++){
-                        int v=i+x[k];
-                        int z=i+y[k];
-                        if(v>=0 && v<row && z>=0 && z<col){
-                            if(board[v][z].getValue()==mine)
-                                count++;
-                        }
-                    }
-                }
+    }
 
-                board[i][j].setValue(count);
+    public void setupNeighbour(Mbutton button){
+        int i = button.i;
+        int j = button.j;
+        int xi,yj;
+        for(int k = 0; k<8 ; k++){
+            xi = i + x[k];
+            yj = j + y[k];
+            if(xi < row && yj < col && xi >= 0 && yj >= 0 && board[xi][yj].value != mine){
+                board[xi][yj].value++;
             }
         }
     }
-    public void setmines(){
-        Random rand=new Random();
-        for(int i=0;i<num_of_mines;i++){
 
-            t[i]=rand.nextInt(row-1);
-            u[i]=rand.nextInt(col-1);
-            board[t[i]][u[i]].value=mine;
-
-        }
-
-
-
-    }
+    @SuppressLint("SetTextI18n")
     @Override
     public void onClick(View view) {
 
@@ -130,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return;
             }
             if(button.getValue()==0){
-                button.setText(" ");
+                button.setText("");
                 button.revealed=true;
                 reveal(button.i,button.j);
             }
@@ -150,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
+    @SuppressLint("SetTextI18n")
     public void revealAllmines(){
         for(int i=0;i<row;i++){
             for(int j=0;j<col;j++){
@@ -175,7 +199,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    public void reveal(int i,int j){
+    @SuppressLint("SetTextI18n")
+    public void reveal(int i, int j){
         for(int k=0;k<8;k++){
             int q=i+x[k];
             int r=j+y[k];

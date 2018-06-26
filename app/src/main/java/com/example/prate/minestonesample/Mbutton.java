@@ -24,14 +24,7 @@ public class Mbutton extends AppCompatButton {
         return this.value;
     }
 
-    public void setText(String s) {
-        this.s = s;
-    }
 
-    public String getText() {
-
-        return this.s;
-    }
     public void revealstatus(){
         if(value!=MainActivity.mine){
 
