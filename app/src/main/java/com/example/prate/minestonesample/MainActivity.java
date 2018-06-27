@@ -2,24 +2,27 @@ package com.example.prate.minestonesample;
 
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
+
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.ListIterator;
+
 import java.util.Random;
+
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
-    public  int row=8;
-    public  int col=8;
+    public  int row=7;
+    public  int col=7;
     ArrayList<LinearLayout> linearLayouts;
 
     boolean currentstatus=true;
@@ -27,16 +30,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     LinearLayout rootLayout;
 
     public final static int mine=-1;
-    int num_of_mines=18;
+    int num_of_mines=14;
     int x[]={-1,-1,-1,0,1,1,1,0};
     int y[]={-1,0,1,1,1,0,-1,-1};
 
 
+    @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+//        Intent ilo=getIntent();
+//        String s=ilo.getStringExtra("XY");
+//        switch (s) {
+//            case "Easy":
+//                row = 7;
+//                col = 7;
+//
+//                break;
+//            case "Medium":
+//                row = 6;
+//                col = 6;
+//                break;
+//            default:
+//                row = 5;
+//                col = 5;
+//                break;
+//        }
         rootLayout=findViewById(R.id.root);
+
         setup();
         setmines();
       // show();
@@ -52,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        }
 //    }
 
+    @SuppressLint("NewApi")
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void setup(){
         currentstatus=true;
         rootLayout.removeAllViews();
@@ -81,6 +105,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 button.setValue(0);
                 button.revealed=false;
                 board[i][j]=button;
+              //  button.setBackgroundColor(getResources().getColor(R.color.dargreen));
+                button.setBackground(getDrawable(R.drawable.button));
             }
         }
 
@@ -135,8 +161,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @SuppressLint("SetTextI18n")
-    @Override
+
+    @SuppressLint({"NewApi", "SetTextI18n"})
     public void onClick(View view) {
 
         Mbutton button =(Mbutton)view;
@@ -146,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (button.getValue() == mine){
                 Toast.makeText(this,"you loose",Toast.LENGTH_LONG).show();
                 currentstatus=false;
+
                 revealAllmines();
                 return;
             }
@@ -153,12 +180,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return;
             }
             if(button.getValue()==0){
-                button.setText("");
+              // button.setBackgroundColor(getResources().getColor(R.color.white));
+                button.setBackground(getDrawable(R.drawable.whitebutton));
                 button.revealed=true;
                 reveal(button.i,button.j);
             }
             else{
                 button.setText(""+button.getValue());
+               // button.setBackgroundColor(getResources().getColor(R.color.dargreen));
+                button.setTextSize(22);
+               button.setBackground(getDrawable(R.drawable.button));
             }
 
 
@@ -173,19 +204,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "ResourceAsColor", "NewApi"})
     public void revealAllmines(){
         for(int i=0;i<row;i++){
             for(int j=0;j<col;j++){
                 if(!board[i][j].revealed){
-                    if(board[i][j].getValue()==mine)
-                        board[i][j].setText("*");
+                    if(board[i][j].getValue()==mine) {
+                        // board[i][j].setText("*");  //////
+                        board[i][j].setBackground(getDrawable(R.drawable.mine_1));
+                    }
                     else {
-                        if(board[i][j].getValue()==0){
-                            board[i][j].setText( " ");
+                        if(board[i][j].getValue()==0 ){
+                            board[i][j].setBackground(getDrawable(R.drawable.whitebutton));
+
                     }
                            else
                         board[i][j].setText(board[i][j].getValue() + "");
+                        board[i][j].setTextSize(18);
+                        board[i][j].setBackground(getDrawable(R.drawable.button));
+
                     }
                 }
             }
@@ -204,7 +241,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    @SuppressLint("SetTextI18n")
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    @SuppressLint({"SetTextI18n", "NewApi"})
     public void reveal(int i, int j){
         for(int k=0;k<8;k++){
             int q=i+x[k];
@@ -214,12 +252,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //TODO
                 }
                 else {
-                    board[q][r].revealstatus();
+                    revealstatus(board[q][r]);
                     if(board[q][r].getValue()==0){
                         reveal(q,r);
                     }
                     else{
                         board[q][r].setText(""+board[q][r].getValue());
+                        board[q][r].setTextSize(22);
+                       // board[q][r].setBackgroundColor(getResources().getColor(R.color.dargreen));
+                        board[q][r].setBackground(getDrawable(R.drawable.button));
                         board[q][r].setEnabled(false);
                     }
 
@@ -229,22 +270,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
+    @SuppressLint({"ResourceAsColor", "SetTextI18n", "NewApi"})
+    public void revealstatus(Mbutton button) {
+        if (button.getValue() != mine) {
+            if (button.getValue() == 0) {
+               // button.setBackground(getDrawable(R.drawable.whitebutton));
+                button.setBackground(getDrawable(R.drawable.whitebutton)
+                );
+            } else {
+               button.setText("" + button.getValue());
+               // setBackgroundColor(getResources().getColor(R.color.dargreen));
+                button.setBackground(getDrawable(R.drawable.button));
+                button.setTextSize(22);
+                button.revealed = true;
+                button.setEnabled(false);
+
+            }
+        }
+
+
+    }
 
 
 
 
-
+    @SuppressLint("NewApi")
     @Override
     public boolean onLongClick(View view) {
         Mbutton button =(Mbutton)view;
-        if(button.getText().equals("F")){
+        if(button.gettextvalue().equals("F")){
 
-            button.setText(" ");
-            button.setTextColor(Color.rgb(0,0,0));
+            button.setextvalue("a");
+            button.setBackground(getDrawable(R.drawable.button));
+
+
+
+
         }else{
 
-            button.setText("F");
-            button.setTextColor(Color.rgb(255,0,0));
+            button.setextvalue("F");
+            button.setBackground(getDrawable(R.drawable.flag_1));
+
 
         }
         return true;
